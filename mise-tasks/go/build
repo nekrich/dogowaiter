@@ -1,0 +1,4 @@
+#!/usr/bin/env sh
+# MISE description="Build dogowaiter binary"
+set -eEo pipefail
+go build -o dogowaiter .

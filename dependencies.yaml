@@ -1,0 +1,6 @@
+depends_on:
+  - name: immich-immich
+  - name: adguard
+    stack: media-local
+log_level: debug
+docker_host: unix:///var/run/docker.sock

@@ -1,0 +1,14 @@
+#!/usr/bin/env bash
+# MISE description="Run dogowaiter docker image"
+set -eEo pipefail
+DOCKER_SOCKET_PATH="/var/run/docker.sock"
+# Run with the image's native platform to avoid exec format mismatch.
+IMAGE_PLATFORM=$(docker image inspect dogowaiter --format '{{.Os}}/{{.Architecture}}' 2>/dev/null || true)
+docker run \
+  --rm \
+  --interactive \
+  --tty \
+  ${IMAGE_PLATFORM:+--platform "$IMAGE_PLATFORM"} \
+  --volume "${DOCKER_SOCKET_PATH}:${DOCKER_SOCKET_PATH}" \
+  dogowaiter \
+  "$@"

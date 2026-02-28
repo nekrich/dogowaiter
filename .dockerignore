@@ -1,0 +1,15 @@
+/.git
+/.github
+/.cursor
+/.mise
+/build
+/mise-tasks/docker
+/.editorconfig
+/.gitattributes
+/.gitignore
+/dogowaiter
+/mise.lock
+/mise.toml
+/README.md
+/.DS_Store
+/.dockerignore

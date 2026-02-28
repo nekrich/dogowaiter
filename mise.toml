@@ -1,0 +1,31 @@
+min_version = "2026.3.9"
+
+[tools]
+# Go language.
+# https://github.com/golang/go/tags
+go = "1"
+
+[env]
+# Go version. Used in docker:build task.
+GO_VERSION = { value = "{{ tools.go.version }}", tools = true }
+# Image version. Used in docker:build task.
+IMAGE_VERSION = "0.0.1"
+
+[settings]
+# Enable lockfile.
+lockfile = true
+
+# Enable experimental features.
+experimental = true
+
+# Number of jobs to run in parallel.
+jobs = 4
+
+# Expands environment variables in the shell commands.
+# Shell expansion will become the default behavior in the 2026.7.0 release.
+env_shell_expand = true
+
+# Prepare project dependencies.
+[prepare.go]
+# This ensures go dependencies are always up-to-date before running tasks or commands.
+auto = true

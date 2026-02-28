@@ -1,0 +1,8 @@
+#!/usr/bin/env bash
+# MISE description="Tag and push dogowaiter image to GitHub Container Registry (assumes already logged in)"
+set -eEo pipefail
+IMAGE_TAG="${IMAGE_TAG:-latest}"
+REGISTRY_OWNER="${REGISTRY_OWNER:?REGISTRY_OWNER must be set}"
+IMAGE="ghcr.io/${REGISTRY_OWNER}/dogowaiter:${IMAGE_TAG}"
+docker tag dogowaiter "$IMAGE"
+docker push "$IMAGE"
