@@ -3,6 +3,7 @@
 set -eEo pipefail
 REVISION="${REVISION:-"$(git rev-parse HEAD)"}"
 ALPINE_VERSION="${ALPINE_VERSION:-"latest"}"
+ALPINE_DIGEST="${ALPINE_DIGEST:-"$(docker pull "alpine:${ALPINE_VERSION}" | grep -E 'Digest: sha256:' | cut -d' ' -f2)"}"
 CREATED_AT="${CREATED_AT:-"$(date -u +'%Y-%m-%dT%H:%M:%SZ')"}"
 IMAGE_VERSION="${IMAGE_VERSION:-0.0.1}"
 
@@ -12,6 +13,7 @@ docker build \
   --build-arg IMAGE_VERSION="${IMAGE_VERSION}" \
   --build-arg IMAGE_REVISION="${REVISION}" \
   --build-arg IMAGE_CREATED_AT="${CREATED_AT}" \
+  --build-arg ALPINE_DIGEST="${ALPINE_DIGEST}" \
   --build-arg ALPINE_VERSION="${ALPINE_VERSION}" \
   --file build/package/Dockerfile \
   --tag dogowaiter . \

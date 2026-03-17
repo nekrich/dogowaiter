@@ -9,7 +9,7 @@ go = "1"
 # Go version. Used in docker:build task.
 GO_VERSION = { value = "{{ tools.go.version }}", tools = true }
 # Image version. Used in docker:build task.
-IMAGE_VERSION = "0.0.2"
+IMAGE_VERSION = "0.0.3"
 
 [settings]
 # Enable lockfile.

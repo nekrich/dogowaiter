@@ -46,11 +46,27 @@ jobs:
           echo "GO_VERSION=${GO_VERSION}"
           echo "go_version=${GO_VERSION}" >> "$GITHUB_OUTPUT"
 
+          ALPINE_VERSION="latest"
+          echo "ALPINE_VERSION=${ALPINE_VERSION}"
+          echo "alpine_version=${ALPINE_VERSION}" >> "$GITHUB_OUTPUT"
+
+          ALPINE_DIGEST="$(docker pull "alpine:latest" | grep -E 'Digest: sha256:' | cut -d' ' -f2)"
+          echo "ALPINE_DIGEST=${ALPINE_DIGEST}"
+          echo "alpine_digest=${ALPINE_DIGEST}" >> "$GITHUB_OUTPUT"
+
+          IMAGE_PLATFORMS="linux/amd64,linux/arm64/v8"
+          echo "IMAGE_PLATFORMS=${IMAGE_PLATFORMS}"
+          echo "image_platforms=${IMAGE_PLATFORMS}" >> "$GITHUB_OUTPUT"
+
       - name: Set up Set up QEMU
         uses: docker/setup-qemu-action@v4
+        with:
+          platforms: ${{ steps.build-info.outputs.image_platforms }}
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v4
+        with:
+          platforms: ${{ steps.build-info.outputs.image_platforms }}
 
       - name: Login to GitHub Container Registry
         uses: docker/login-action@v4
@@ -70,7 +86,7 @@ jobs:
         with:
           context: .
           file: build/package/Dockerfile
-          platforms: linux/amd64,linux/arm64/v8
+          platforms: ${{ steps.build-info.outputs.image_platforms }}
           push: true
           tags: |
             ghcr.io/${{ github.repository_owner }}/dogowaiter:${{ steps.tag.outputs.tag }}
@@ -82,4 +98,5 @@ jobs:
             IMAGE_VERSION=${{ steps.tag.outputs.tag }}
             IMAGE_REVISION=${{ github.sha }}
             IMAGE_CREATED_AT=${{ steps.build-info.outputs.image_created_at }}
-            ALPINE_VERSION=latest
+            ALPINE_VERSION=${{ steps.build-info.outputs.alpine_version }}
+            ALPINE_DIGEST=${{ steps.build-info.outputs.alpine_digest }}
