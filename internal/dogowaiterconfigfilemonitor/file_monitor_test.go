@@ -56,7 +56,7 @@ func TestWatchFile_validPath_returnsWatcher(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	defer watcher.Close()
+	defer func() { _ = watcher.Close() }()
 
 	if watcher == nil {
 		t.Fatal("watcher is nil")
@@ -72,7 +72,7 @@ func TestWatchFile_missingPath_returnsError(t *testing.T) {
 	watcher, err := watchFile(path, reloadCh, removedCh, defaultDebounceInterval, logger)
 	if err == nil {
 		if watcher != nil {
-			watcher.Close()
+			_ = watcher.Close()
 		}
 		t.Fatal("expected error when watching missing path")
 	}
@@ -96,7 +96,7 @@ func TestWatchFile_writeSendsReloadAfterDebounce(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	defer watcher.Close()
+	defer func() { _ = watcher.Close() }()
 
 	if err := os.WriteFile(path, []byte("updated"), 0644); err != nil {
 		t.Fatal(err)
@@ -123,7 +123,7 @@ func TestMonitorSymlink_regularFile_samePath_returnsNilMonitor(t *testing.T) {
 
 	monitor := DogowaiterConfigFileMonitor{
 		Configuration: DogowaiterConfigFileMonitorConfiguration{ConfigFilePath: resolved},
-		Logger:         slog.Default(),
+		Logger:        slog.Default(),
 	}
 	ch := make(chan struct{}, 1)
 	symlinkMonitor, err := monitor.monitorSymlink(path, ch)
@@ -149,7 +149,7 @@ func TestMonitorSymlink_symlinkTarget_returnsMonitor(t *testing.T) {
 
 	monitor := DogowaiterConfigFileMonitor{
 		Configuration: DogowaiterConfigFileMonitorConfiguration{ConfigFilePath: linkPath},
-		Logger:         slog.Default(),
+		Logger:        slog.Default(),
 	}
 	ch := make(chan struct{}, 1)
 	symlinkMonitor, err := monitor.monitorSymlink(linkPath, ch)

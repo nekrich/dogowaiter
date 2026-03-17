@@ -97,18 +97,21 @@ func Run(opts *RunOptions) {
 	dockerTriggerCh := dockerMonitor.MonitorDependencies()
 	defer dockerMonitor.Close()
 
-	configFileMonitor := dogowaiterconfigfilemonitor.DogowaiterConfigFileMonitor{
+	configFileMonitor := &dogowaiterconfigfilemonitor.DogowaiterConfigFileMonitor{
 		Configuration: dogowaiterconfigfilemonitor.DogowaiterConfigFileMonitorConfiguration{
 			ConfigFilePath: opts.ConfigFilePath,
 		},
 		Logger: logger,
 	}
 	configFileTriggerCh := make(chan struct{}, 1)
-	configFileMonitor.Monitor(configFileTriggerCh)
+	if err := configFileMonitor.Monitor(configFileTriggerCh); err != nil {
+		logger.Error("failed to start config file monitor", "error", err)
+		os.Exit(1)
+	}
 	defer configFileMonitor.Close()
 
 	sigCh := make(chan os.Signal, 1)
-	signal.Notify(sigCh, syscall.SIGTERM, syscall.SIGINT, syscall.SIGSTOP)
+	signal.Notify(sigCh, syscall.SIGTERM, syscall.SIGINT)
 
 	for {
 		select {
@@ -225,7 +228,7 @@ func runInitialCheck(ctx context.Context, checker dogowaiterdocker.DogowaiterDoc
 
 // updateContainerState finds the container by ID in state, runs CheckContainer once, updates that entry, recomputes Healthy. Returns true if state changed.
 func updateContainerState(ctx context.Context, checker dogowaiterdocker.DogowaiterDockerContainerCheckerInterface, state *dogowaiterhealthfile.HealthCheckResult, containerID string) bool {
-	var idx int = -1
+	idx := -1
 	containers := state.GetContainers()
 	for i := range containers {
 		if containers[i].ContainerID == containerID {
@@ -254,7 +257,7 @@ func updateContainerState(ctx context.Context, checker dogowaiterdocker.Dogowait
 		return !container.IsReady
 	})
 
-	var isHealthy bool = len(containers) > 0 && !atLeastOneIsUnhealthy
+	isHealthy := len(containers) > 0 && !atLeastOneIsUnhealthy
 
 	currentState := dogowaiterhealthfile.BuildHealthCheckResult(isHealthy, containers)
 

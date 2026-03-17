@@ -4,6 +4,9 @@ min_version = "2026.3.9"
 # Go language.
 # https://github.com/golang/go/tags
 go = "1"
+# Linter.
+# https://github.com/golangci/golangci-lint
+golangci-lint = "2"
 
 [env]
 # Go version. Used in docker:build task.

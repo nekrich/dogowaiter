@@ -60,12 +60,12 @@ func loadDogowaiterConfigurationFile(configFilePath string, fileIsRequired bool)
 	// read the config file
 	data, err := os.ReadFile(configFilePath)
 	if err != nil {
-		return nil, fmt.Errorf("Cannot read config file %s: %w", configFilePath, err)
+		return nil, fmt.Errorf("cannot read config file %s: %w", configFilePath, err)
 	}
 
 	// parse the yaml from the config file
 	if err := yaml.Unmarshal(data, &configurationFile); err != nil {
-		return nil, fmt.Errorf("Cannot parse yaml from config file %s: %w", configFilePath, err)
+		return nil, fmt.Errorf("cannot parse yaml from config file %s: %w", configFilePath, err)
 	}
 
 	return &configurationFile, nil

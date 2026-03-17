@@ -26,26 +26,26 @@ type DogowaiterConfigFileMonitor struct {
 	watcher        *fsnotify.Watcher
 }
 
-func (monitor DogowaiterConfigFileMonitor) Close() {
+func (monitor *DogowaiterConfigFileMonitor) Close() {
 	monitor.setSymlinkMonitor(nil)
 	monitor.setWatcher(nil)
 }
 
-func (monitor DogowaiterConfigFileMonitor) setWatcher(watcher *fsnotify.Watcher) {
+func (monitor *DogowaiterConfigFileMonitor) setWatcher(watcher *fsnotify.Watcher) {
 	if monitor.watcher != nil {
-		monitor.watcher.Close()
+		_ = monitor.watcher.Close()
 	}
 	monitor.watcher = watcher
 }
 
-func (monitor DogowaiterConfigFileMonitor) setSymlinkMonitor(symlinkMonitor *DogowaiterConfigFileMonitor) {
+func (monitor *DogowaiterConfigFileMonitor) setSymlinkMonitor(symlinkMonitor *DogowaiterConfigFileMonitor) {
 	if monitor.symlinkMonitor != nil {
 		monitor.symlinkMonitor.Close()
 	}
 	monitor.symlinkMonitor = symlinkMonitor
 }
 
-func (monitor DogowaiterConfigFileMonitor) Monitor(configFileUpdateChannel chan<- struct{}) error {
+func (monitor *DogowaiterConfigFileMonitor) Monitor(configFileUpdateChannel chan<- struct{}) error {
 	return monitor.monitor(monitor.Configuration.ConfigFilePath, configFileUpdateChannel, true)
 }
 
